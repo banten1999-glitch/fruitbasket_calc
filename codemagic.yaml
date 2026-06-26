@@ -1,0 +1,21 @@
+workflows:
+  windows-to-ios-workflow:
+    name: iOS Build (Windows Fix)
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+    scripts:
+      - name: 1. Clean and Generate iOS files
+        script: |
+          rm -rf ios
+          flutter create .
+      - name: 2. Install Dependencies
+        script: flutter pub get
+      - name: 3. Build and Package IPA
+        script: |
+          flutter build ios --release --no-codesign
+          mkdir -p Payload
+          mv build/ios/iphoneos/Runner.app Payload/
+          zip -r calculater.ipa Payload
+    artifacts:
+      - calculater.ipa
